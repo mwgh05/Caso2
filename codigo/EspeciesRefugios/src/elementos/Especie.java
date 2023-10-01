@@ -23,33 +23,3 @@ public class Especie {
         individuos.add(individuo);
     }
 }
-/*import java.util.List;
-import java.util.ArrayList;
-
-public class Especie {
-	String nombre;
-	String descripcion;
-	int cantidad;
-	String habitat;
-	private List <Especie> individuos;
-	public Especie(String nombre, String descripcion, int cantidad, String habitat) {
-		this.nombre=nombre;
-		this.descripcion=descripcion;
-		this.cantidad=cantidad;
-		this.habitat=habitat;
-	}
-	public String getNombre() {
-        return nombre;
-    }
-	public String getDescripcion() {
-        return descripcion;
-    }
-	public int getCantidad() {
-        return cantidad;
-    }
-	public String getHabitat() {
-        return habitat;
-    }
-
-}
-*/

@@ -1,5 +1,7 @@
 package ventanas;
 import elementos.*;
+import exception.EspecieDuplicadaException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -76,7 +78,7 @@ public class IngresoEspecie extends JFrame {
 
         agregarButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Resto del código para agregar la especie
+                // Modificar el codigo para los botones de agregar y crear especie
             }
         });
 
@@ -87,9 +89,9 @@ public class IngresoEspecie extends JFrame {
                 String fecha = fechaField.getText();
                 String razon = razonField.getText();
                 String estado = estadoField.getText();
-                double peso = Double.parseDouble(pesoField.getText());
                 String comentarios = comentariosField.getText();
                 String nombreRefugio = (String) refugioComboBox.getSelectedItem();
+                double peso=0;
 
                 Refugio refugioSeleccionado = null;
                 for (Refugio refugio : refugios) {
@@ -107,8 +109,10 @@ public class IngresoEspecie extends JFrame {
                             break;
                         }
                     }
-
+                    try {
+                        peso = Double.parseDouble(pesoField.getText());                                  
                     if (especieExistente != null) {
+                    	
                         Individuo nuevoIndividuo = new Individuo(nombreIndividuo, fecha, razon, estado, peso, comentarios);
                         especieExistente.agregarIndividuo(nuevoIndividuo);
                         JOptionPane.showMessageDialog(null, "Individuo agregado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -122,6 +126,11 @@ public class IngresoEspecie extends JFrame {
                             JOptionPane.showMessageDialog(null, "Especie y individuo agregados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                         }
                     }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "El valor de peso debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                    } catch (EspecieDuplicadaException ex) {
+						ex.printStackTrace();
+					}
 
                     dispose();
                 } else {

@@ -1,5 +1,6 @@
 package elementos;
 import java.util.ArrayList;
+import exception.*;
 import java.util.List;
 
 public class Refugio {
@@ -25,37 +26,13 @@ public class Refugio {
         return especies;
     }
 
-    public void agregarEspecie(Especie especie) {
+    public void agregarEspecie(Especie especie) throws EspecieDuplicadaException {
+        if (especies.contains(especie)) {
+            throw new EspecieDuplicadaException("La especie ya existe en este refugio.");
+        }
         especies.add(especie);
     }
 }
 
-/*import java.util.ArrayList;
-import java.util.List;
 
-public class Refugio {
-    private String nombre;
-    private String ubicacion;
-    private String area;
-    private List<Especie> especies; 
-
-    public Refugio(String nombre, String ubicacion, String area) {
-        this.nombre = nombre;
-        this.ubicacion = ubicacion;
-        this.area = area;
-        this.especies = new ArrayList<>(); 
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void agregarEspecie(Especie especie) {
-        especies.add(especie);
-    }
-
-    public List<Especie> getEspecies() {
-        return especies;
-    }
-}*/
 
