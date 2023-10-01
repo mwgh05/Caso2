@@ -93,9 +93,9 @@ public class VerEspecie extends JFrame {
     }
     private static List<Refugio> obtenerListaDeRefugios() {
         List<Refugio> refugios = new ArrayList<>();
-        refugios.add(new Refugio("Refugio 1", "Ubicacion 1", "Area 1", "XS"));
-        refugios.add(new Refugio("Refugio 2", "Ubicacion 2", "Area 2", "XS"));
-        refugios.add(new Refugio("Refugio 3", "Ubicacion 3", "Area 3", "XS"));
+        refugios.add(new Refugio("Refugio 1", "Ubicacion 1", "Area 1", "XS", "y", "z"));
+        refugios.add(new Refugio("Refugio 2", "Ubicacion 2", "Area 2", "XS", "y", "z"));
+        refugios.add(new Refugio("Refugio 3", "Ubicacion 3", "Area 3", "XS", "y", "z"));
         return refugios;
     }
     private static List<Especie> obtenerListaDeEspecies() {

@@ -146,15 +146,15 @@ public class IngresoEspecie extends JFrame {
     public static void main(String[] args) {
     	List<Refugio> refugios = obtenerListaDeRefugios();
     	List<Especie> especies = obtenerListaDeEspecies();
-    	refugios.add(new Refugio("Refugio A", "Ubicacion A", "Area A", "x"));
-        refugios.add(new Refugio("Refugio B", "Ubicacion B", "Area B", "X"));
+    	refugios.add(new Refugio("Refugio A", "Ubicacion A", "Area A", "x", "y", "z"));
+        refugios.add(new Refugio("Refugio B", "Ubicacion B", "Area B", "X", "y", "z"));
         SwingUtilities.invokeLater(() -> new IngresoEspecie(refugios,especies));
     }
     private static List<Refugio> obtenerListaDeRefugios() {
         List<Refugio> refugios = new ArrayList<>();
-        refugios.add(new Refugio("Refugio 1", "Ubicacion 1", "Area 1", "XS"));
-        refugios.add(new Refugio("Refugio 2", "Ubicacion 2", "Area 2", "XS"));
-        refugios.add(new Refugio("Refugio 3", "Ubicacion 3", "Area 3", "XS"));
+        refugios.add(new Refugio("Refugio 1", "Ubicacion 1", "Area 1", "XS", "y", "z"));
+        refugios.add(new Refugio("Refugio 2", "Ubicacion 2", "Area 2", "XS", "y", "z"));
+        refugios.add(new Refugio("Refugio 3", "Ubicacion 3", "Area 3", "XS", "y", "z"));
         return refugios;
     }
     private static List<Especie> obtenerListaDeEspecies() {
