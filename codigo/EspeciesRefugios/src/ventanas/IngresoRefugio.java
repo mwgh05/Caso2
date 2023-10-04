@@ -17,12 +17,25 @@ public class IngresoRefugio extends JFrame {
     private JComboBox<String> cantonComboBox;
     private JButton agregarButton;
     
-    private List<Provincia> provincias;
+    private List<Provincia> provincias=new ArrayList<>();
     private List<String> cantones;
 
-    public IngresoRefugio(List<Provincia> provincias, List<String> cantones) {
-        this.provincias = provincias;
-        this.cantones = cantones;
+    public IngresoRefugio() {
+    	Provincia Prov1=new Provincia("Provincia 1");
+    	Provincia Prov2=new Provincia("Provincia 2");
+    	Provincia Prov3=new Provincia("Provincia 3");
+    	String cant1="Canton A";
+    	String cant2="Canton B";
+    	String cant3="Canton C";
+    	Prov1.agregarCanton(cant1);
+    	Prov1.agregarCanton(cant2);
+    	Prov2.agregarCanton(cant2);
+    	Prov2.agregarCanton(cant3);
+    	Prov3.agregarCanton(cant3);
+    	Prov3.agregarCanton(cant1);
+    	provincias.add(Prov1);
+        provincias.add(Prov2);
+        provincias.add(Prov3);
         
         setTitle("Ingreso de Refugio");
         setSize(500, 300);
@@ -72,6 +85,22 @@ public class IngresoRefugio extends JFrame {
         provinciaComboBox = new JComboBox<>();
         for (Provincia provincia : provincias) {
             provinciaComboBox.addItem(provincia.getNombre());
+            provinciaComboBox.addActionListener(new ActionListener() {           
+                public void actionPerformed(ActionEvent e) {
+                    String provinciaSeleccionada = (String) provinciaComboBox.getSelectedItem();
+
+                    cantonComboBox.removeAllItems();
+
+                    for (Provincia provincia : provincias) {
+                        if (provincia.getNombre().equals(provinciaSeleccionada)) {
+                            for (String canton : provincia.getCantones()) {
+                                cantonComboBox.addItem(canton);
+                            }
+                            break; 
+                        }
+                    }
+                }
+            });
         }
         panel.add(provinciaComboBox, constraints);
 
@@ -80,9 +109,7 @@ public class IngresoRefugio extends JFrame {
 
         constraints.gridx = 3;
         cantonComboBox = new JComboBox<>();
-        for (String canton : cantones) {
-            cantonComboBox.addItem(canton);
-        }
+        
         panel.add(cantonComboBox, constraints);
 
         constraints.gridy = 4;
@@ -114,7 +141,9 @@ public class IngresoRefugio extends JFrame {
                 String canton = (String) cantonComboBox.getSelectedItem();
                 String senas = senasField.getText();
 
-                // Resto del código para agregar el refugio
+                Refugio nuevoRefugio=new Refugio(nombre,provincia,canton,senas,area,horario);
+                //agregar al json
+                JOptionPane.showMessageDialog(null, "Refugio agregado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
                 dispose();
             }
@@ -125,29 +154,8 @@ public class IngresoRefugio extends JFrame {
         setVisible(true);
     }
 
-    
-
-    
-
     public static void main(String[] args) {
-    	List<Provincia> provincias = obtenerListaDeProvincias();
-    	List<String> cantones = obtenerListaDeCantones();
-        SwingUtilities.invokeLater(() -> new IngresoRefugio(provincias,cantones));
-    }
-    private static List<Provincia> obtenerListaDeProvincias() {
-        List<Provincia> provincias = new ArrayList<>();
-        provincias.add(new Provincia("Provincia 1"));
-        provincias.add(new Provincia("Provincia 2"));
-        provincias.add(new Provincia("Provincia 3"));
-        return provincias;
-    }
-    private static List<String> obtenerListaDeCantones() {
-        List<String> cantones = new ArrayList<>();
-        cantones.add("Canton A");
-        cantones.add("Canton B");
-        cantones.add("Canton C");
-        return cantones;
+    	SwingUtilities.invokeLater(() -> new IngresoRefugio());
     }
 }
-
 

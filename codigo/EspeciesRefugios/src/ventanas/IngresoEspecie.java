@@ -15,12 +15,37 @@ public class IngresoEspecie extends JFrame {
     private JTextField nombreField, fechaField, razonField, estadoField, pesoField, comentariosField;
     private JButton agregarButton, crearButton;
 
-    private List<Refugio> refugios;
+    private List<Refugio> refugios=new ArrayList<>();;
     private List<Especie> especies;
 
-    public IngresoEspecie(List<Refugio> refugios, List<Especie> especies) {
-        this.refugios = refugios;
-        this.especies = especies;
+    public IngresoEspecie() {
+    	
+    	Especie uno=new Especie("Especie 1");
+        Especie dos=new Especie("Especie 2");
+        Especie tres=new Especie("Especie 3");
+        Especie other=new Especie("Other");
+        Refugio Uno=new Refugio("Refugio 1", "Ubicacion 1", "Area 1", "XS", "y", "z");
+        Refugio Dos=new Refugio("Refugio 2", "Ubicacion 2", "Area 2", "XS", "y", "z");
+        Refugio Tres=new Refugio("Refugio 3", "Ubicacion 3", "Area 3", "XS", "y", "z");
+        try{
+        	Uno.agregarEspecie(uno);
+        	Uno.agregarEspecie(dos);
+        	Dos.agregarEspecie(dos);
+        	Dos.agregarEspecie(tres);
+        	Tres.agregarEspecie(tres);
+        	Tres.agregarEspecie(uno);
+        	Uno.agregarEspecie(other);
+        	Dos.agregarEspecie(other);
+        	Tres.agregarEspecie(other);
+        }catch(EspecieDuplicadaException ex) {
+        	JOptionPane.showMessageDialog(null, "No se puede ingresar especies ya existentes.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        this.refugios.add(Uno);
+        this.refugios.add(Dos);
+        this.refugios.add(Tres);
+        
+    
+        
 
         setTitle("Ingreso de Especie");
         setSize(500, 400);
@@ -33,17 +58,36 @@ public class IngresoEspecie extends JFrame {
         for (Refugio refugio : refugios) {
             refugioComboBox.addItem(refugio.getNombre());
         }
-        panel.add(refugioComboBox);
+        refugioComboBox.addActionListener(new ActionListener() {           
+            public void actionPerformed(ActionEvent e) {
+                String refugioSeleccionado = (String) refugioComboBox.getSelectedItem();
 
-        panel.add(new JLabel("Seleccione una Especie:"));
+                especieComboBox.removeAllItems();
+
+                for (Refugio refugio : refugios) {
+                    if (refugio.getNombre().equals(refugioSeleccionado)) {
+                        for (Especie especie : refugio.getEspecies()) {
+                            especieComboBox.addItem(especie.getNombre());
+                        }
+                        break; 
+                    }
+                }
+            }
+        });
+
+        panel.add(refugioComboBox);
+        
+        JLabel selecLabel=new JLabel("Seleccione una Especie:");
+        panel.add(selecLabel);
         especieComboBox = new JComboBox<>();
-        for (Especie especie : especies) {
-            especieComboBox.addItem(especie.getNombre());
-        }
+        
         panel.add(especieComboBox);
         
-        panel.add(new JLabel("Nombre de la Especie:"));
+        JLabel nombreLabel = new JLabel("Nombre de la Especie:");
+        nombreLabel.setVisible(false);
         nombreField = new JTextField();
+        nombreField.setVisible(false);
+        panel.add(nombreLabel);
         panel.add(nombreField);
 
         panel.add(new JLabel("Fecha de Ingreso:"));
@@ -58,7 +102,7 @@ public class IngresoEspecie extends JFrame {
         estadoField = new JTextField();
         panel.add(estadoField);
 
-        panel.add(new JLabel("Peso:"));
+        panel.add(new JLabel("Peso (en gramos):"));
         pesoField = new JTextField();
         panel.add(pesoField);
 
@@ -68,31 +112,31 @@ public class IngresoEspecie extends JFrame {
 
         agregarButton = new JButton("Agregar");
         crearButton = new JButton("Crear Nuevo");
+        crearButton.setVisible(false);
+        
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(agregarButton);
         buttonPanel.add(crearButton);
+        
 
         panel.add(new JLabel(""));
         panel.add(buttonPanel);
+        
+        
+        
+        
 
         agregarButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Modificar el codigo para los botones de agregar y crear especie
-            }
-        });
-
-        crearButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	String nombreIndividuo = nombreField.getText();
-                String nombreEspecie = nombreField.getText();
+                
+                double peso=0;
+            	String nombreEspecie = (String) especieComboBox.getSelectedItem();
                 String fecha = fechaField.getText();
                 String razon = razonField.getText();
                 String estado = estadoField.getText();
                 String comentarios = comentariosField.getText();
                 String nombreRefugio = (String) refugioComboBox.getSelectedItem();
-                double peso=0;
-
                 Refugio refugioSeleccionado = null;
                 for (Refugio refugio : refugios) {
                     if (refugio.getNombre().equals(nombreRefugio)) {
@@ -109,61 +153,98 @@ public class IngresoEspecie extends JFrame {
                             break;
                         }
                     }
+                	
                     try {
-                        peso = Double.parseDouble(pesoField.getText());                                  
-                    if (especieExistente != null) {
+                        peso = Double.parseDouble(pesoField.getText());
+                    
+                    if (nombreEspecie == "Other") {
+                    	int opcion = JOptionPane.showConfirmDialog(null, "La especie seleccionada no existe en el refugio. ¿Desea agregar una nueva especie?", "Especie no encontrada", JOptionPane.YES_NO_OPTION);
+                        if (opcion == JOptionPane.YES_OPTION) {
+                        	nombreLabel.setVisible(true);
+                        	nombreField.setVisible(true);
+                        	crearButton.setVisible(true);
+                        	agregarButton.setVisible(false);
+                        	especieComboBox.setVisible(false);
+                        	selecLabel.setVisible(false);
+                        	
+                           }else {
+                        	   dispose();
+                           }
                     	
-                        Individuo nuevoIndividuo = new Individuo(nombreIndividuo, fecha, razon, estado, peso, comentarios);
+                    } else {
+                    	Individuo nuevoIndividuo = new Individuo(fecha, razon, estado, peso, comentarios);
                         especieExistente.agregarIndividuo(nuevoIndividuo);
                         JOptionPane.showMessageDialog(null, "Individuo agregado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        int opcion = JOptionPane.showConfirmDialog(null, "La especie seleccionada no existe en el refugio. ¿Desea agregarla como nueva especie?", "Especie no encontrada", JOptionPane.YES_NO_OPTION);
-                        if (opcion == JOptionPane.YES_OPTION) {
-                            Especie nuevaEspecie = new Especie(nombreEspecie);
-                            Individuo nuevoIndividuo = new Individuo(nombreIndividuo, fecha, razon, estado, peso, comentarios);
-                            nuevaEspecie.agregarIndividuo(nuevoIndividuo);
-                            refugioSeleccionado.agregarEspecie(nuevaEspecie);
-                            JOptionPane.showMessageDialog(null, "Especie y individuo agregados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                        }
+                        dispose();
                     }
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(null, "El valor de peso debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
-                    } catch (EspecieDuplicadaException ex) {
-						ex.printStackTrace();
-					}
+                    }
+                }else {
+                    JOptionPane.showMessageDialog(null, "El refugio seleccionado no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+                }   
 
-                    dispose();
+                    
+                 
+            }
+        });
+        crearButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	
+            	String nombreEspecie = nombreField.getText();
+                
+                String fecha = fechaField.getText();
+                String razon = razonField.getText();
+                String estado = estadoField.getText();
+                String comentarios = comentariosField.getText();
+                String nombreRefugio = (String) refugioComboBox.getSelectedItem();
+                double peso=0;
+
+                Refugio refugioSeleccionado = null;
+                for (Refugio refugio : refugios) {
+                    if (refugio.getNombre().equals(nombreRefugio)) {
+                        refugioSeleccionado = refugio;
+                        break;
+                    }
+                }
+
+                if (refugioSeleccionado != null) {
+                    
+                    try {
+                        peso = Double.parseDouble(pesoField.getText());                                  
+                    
+                            Especie nuevaEspecie = new Especie(nombreEspecie);
+                            Individuo nuevoIndividuo = new Individuo(fecha, razon, estado, peso, comentarios);
+                            nuevaEspecie.agregarIndividuo(nuevoIndividuo);
+                            try {
+                            	refugioSeleccionado.agregarEspecie(nuevaEspecie);
+                            	JOptionPane.showMessageDialog(null, "Especie e individuo agregados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                                
+                            }catch (EspecieDuplicadaException ex) {
+                            	JOptionPane.showMessageDialog(null, "No se puede ingresar especies ya existentes.", "Error", JOptionPane.ERROR_MESSAGE);
+        					}
+                            
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "El valor de peso debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                    } 
+
+                    
                 } else {
                     JOptionPane.showMessageDialog(null, "El refugio seleccionado no existe.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
+             
+                dispose();
             }
         });
+
+        
 
         add(panel);
 
         setVisible(true);
     }
     public static void main(String[] args) {
-    	List<Refugio> refugios = obtenerListaDeRefugios();
-    	List<Especie> especies = obtenerListaDeEspecies();
-    	refugios.add(new Refugio("Refugio A", "Ubicacion A", "Area A", "x", "y", "z"));
-        refugios.add(new Refugio("Refugio B", "Ubicacion B", "Area B", "X", "y", "z"));
-        SwingUtilities.invokeLater(() -> new IngresoEspecie(refugios,especies));
-    }
-    private static List<Refugio> obtenerListaDeRefugios() {
-        List<Refugio> refugios = new ArrayList<>();
-        refugios.add(new Refugio("Refugio 1", "Ubicacion 1", "Area 1", "XS", "y", "z"));
-        refugios.add(new Refugio("Refugio 2", "Ubicacion 2", "Area 2", "XS", "y", "z"));
-        refugios.add(new Refugio("Refugio 3", "Ubicacion 3", "Area 3", "XS", "y", "z"));
-        return refugios;
-    }
-    private static List<Especie> obtenerListaDeEspecies() {
-        List<Especie> especies = new ArrayList<>();
-        especies.add(new Especie("Especie 1"));
-        especies.add(new Especie("Especie 2"));
-        especies.add(new Especie("Especie 3"));
-        especies.add(new Especie("Other"));
-        return especies;
+    	SwingUtilities.invokeLater(() -> new IngresoEspecie());
     }
 }
-
+    

@@ -1,5 +1,6 @@
 package elementos;
 import java.util.List;
+import java.util.ArrayList;
 
 public class Provincia {
 	private String nombre;
@@ -7,6 +8,7 @@ public class Provincia {
 	
 	public Provincia(String nombre) {
 		this.nombre=nombre;
+		this.cantones=new ArrayList<>();
 	}
 	
 	public String getNombre() {
@@ -15,6 +17,10 @@ public class Provincia {
 
     public List<String> getCantones() {
         return cantones;
+    }
+    
+    public void agregarCanton(String canton) {
+    	cantones.add(canton);
     }
 
 }

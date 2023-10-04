@@ -30,12 +30,15 @@ public class Refugio {
         return especies;
     }
 
-    public void agregarEspecie(Especie especie) throws EspecieDuplicadaException {
-        if (especies.contains(especie)) {
+    public void agregarEspecie(Especie _especie) throws EspecieDuplicadaException {
+    	for(Especie especie : especies) {
+        if (especie.getNombre().equals(_especie.getNombre())) {
             throw new EspecieDuplicadaException("La especie ya existe en este refugio.");
         }
-        especies.add(especie);
+    	}
+        especies.add(_especie);
     }
+    
 }
 
 

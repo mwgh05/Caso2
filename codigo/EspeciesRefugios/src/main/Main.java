@@ -10,21 +10,14 @@ import ventanas.*;
 
 public class Main extends JFrame {
     private JButton ingresarEspecieButton, ingresarRefugioButton, verEspeciesButton;
-    private List<Refugio> refugios;
-    private List<Especie> especies;
-    private List<Provincia> provincias;
-    private List<String> cantones;
-
+    
     public Main() {
         setTitle("Gestión de Refugios y Especies");
         setSize(400, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        refugios = new ArrayList<>();
-        especies = new ArrayList<>();
-        provincias = new ArrayList<>();
-        cantones = new ArrayList<>();
+        
         
         ingresarEspecieButton = new JButton("Ingresar Especie");
         ingresarRefugioButton = new JButton("Ingresar Refugio");
@@ -59,17 +52,17 @@ public class Main extends JFrame {
     }
 
     private void abrirVentanaIngresarEspecie() {
-    	//new IngresoEspecie();
+    	new IngresoEspecie();
         
     }
 
     private void abrirVentanaIngresarRefugio() {
-    	//new IngresoRefugio();
+    	new IngresoRefugio();
         
     }
 
     private void abrirVentanaSeleccionarRefugio() {
-    	//new VerEspecie();
+    	new VerEspecie();
             
     }
 
