@@ -8,15 +8,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
+import org.jdatepicker.impl.*;
+import java.util.Date;
+import files.DateLabelFormatter;
 
 public class IngresoEspecie extends JFrame {
     private JComboBox<String> refugioComboBox;
     private JComboBox<String> especieComboBox;
-    private JTextField nombreField, fechaField, razonField, estadoField, pesoField, comentariosField;
+    private JTextField nombreField, razonField, estadoField, pesoField, comentariosField;
     private JButton agregarButton, crearButton;
+    private JLabel selecLabel, nombreLabel;
 
     private List<Refugio> refugios=new ArrayList<>();;
-    private List<Especie> especies;
+
 
     public IngresoEspecie() {
     	
@@ -77,23 +82,58 @@ public class IngresoEspecie extends JFrame {
 
         panel.add(refugioComboBox);
         
-        JLabel selecLabel=new JLabel("Seleccione una Especie:");
+        selecLabel=new JLabel("Seleccione una Especie:");
         panel.add(selecLabel);
+        
         especieComboBox = new JComboBox<>();
+        especieComboBox.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent e) {
+        		String especieSeleccionada = (String) especieComboBox.getSelectedItem();
+        		if(especieSeleccionada.equals("Other")) {
+        			int opcion = JOptionPane.showConfirmDialog(null, "¿Desea agregar una nueva especie?", "Especie no encontrada", JOptionPane.YES_NO_OPTION);
+                    if (opcion == JOptionPane.YES_OPTION) {
+                    	nombreLabel.setVisible(true);
+                    	nombreField.setVisible(true);
+                    	crearButton.setVisible(true);
+                    	agregarButton.setVisible(false);
+                    	especieComboBox.setVisible(false);
+                    	selecLabel.setVisible(false);
+                    	
+                       }else {
+                    	   especieComboBox.removeAllItems();
+                       }
+        			
+        		}
+        	}
+        	
+        });
+        
         
         panel.add(especieComboBox);
         
-        JLabel nombreLabel = new JLabel("Nombre de la Especie:");
+        nombreLabel = new JLabel("Nombre de la Especie:");
         nombreLabel.setVisible(false);
         nombreField = new JTextField();
         nombreField.setVisible(false);
         panel.add(nombreLabel);
         panel.add(nombreField);
 
-        panel.add(new JLabel("Fecha de Ingreso:"));
-        fechaField = new JTextField();
-        panel.add(fechaField);
 
+        panel.add(new JLabel("Fecha de Ingreso:"));
+        
+        UtilDateModel model = new UtilDateModel();
+      Properties p = new Properties();
+      p.put("text.today", "Today");
+      p.put("text.month", "Month");
+      p.put("text.year", "Year");
+      JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+      JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+      
+      panel.add(datePicker);
+      
+  	
+
+        
         panel.add(new JLabel("Razón de Ingreso:"));
         razonField = new JTextField();
         panel.add(razonField);
@@ -132,7 +172,7 @@ public class IngresoEspecie extends JFrame {
                 
                 double peso=0;
             	String nombreEspecie = (String) especieComboBox.getSelectedItem();
-                String fecha = fechaField.getText();
+            	Date fecha = (Date) datePicker.getModel().getValue();
                 String razon = razonField.getText();
                 String estado = estadoField.getText();
                 String comentarios = comentariosField.getText();
@@ -144,7 +184,7 @@ public class IngresoEspecie extends JFrame {
                         break;
                     }
                 }
-
+                
                 if (refugioSeleccionado != null) {
                     Especie especieExistente = null;
                     for (Especie especie : refugioSeleccionado.getEspecies()) {
@@ -157,26 +197,12 @@ public class IngresoEspecie extends JFrame {
                     try {
                         peso = Double.parseDouble(pesoField.getText());
                     
-                    if (nombreEspecie == "Other") {
-                    	int opcion = JOptionPane.showConfirmDialog(null, "La especie seleccionada no existe en el refugio. ¿Desea agregar una nueva especie?", "Especie no encontrada", JOptionPane.YES_NO_OPTION);
-                        if (opcion == JOptionPane.YES_OPTION) {
-                        	nombreLabel.setVisible(true);
-                        	nombreField.setVisible(true);
-                        	crearButton.setVisible(true);
-                        	agregarButton.setVisible(false);
-                        	especieComboBox.setVisible(false);
-                        	selecLabel.setVisible(false);
-                        	
-                           }else {
-                        	   dispose();
-                           }
-                    	
-                    } else {
+                    
                     	Individuo nuevoIndividuo = new Individuo(fecha, razon, estado, peso, comentarios);
                         especieExistente.agregarIndividuo(nuevoIndividuo);
                         JOptionPane.showMessageDialog(null, "Individuo agregado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                         dispose();
-                    }
+                 
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(null, "El valor de peso debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -193,7 +219,7 @@ public class IngresoEspecie extends JFrame {
             	
             	String nombreEspecie = nombreField.getText();
                 
-                String fecha = fechaField.getText();
+            	Date fecha = (Date) datePicker.getModel().getValue();
                 String razon = razonField.getText();
                 String estado = estadoField.getText();
                 String comentarios = comentariosField.getText();
