@@ -1,8 +1,9 @@
 package elementos;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
-public class Especie {
+public class Especie implements Serializable{
     private String nombre;
     private List<Individuo> individuos;
 

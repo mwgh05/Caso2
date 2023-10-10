@@ -12,8 +12,11 @@ import java.util.Properties;
 import org.jdatepicker.impl.*;
 import java.util.Date;
 import files.DateLabelFormatter;
+import java.io.*;
+
 
 public class IngresoEspecie extends JFrame {
+	
     private JComboBox<String> refugioComboBox;
     private JComboBox<String> especieComboBox;
     private JTextField nombreField, razonField, estadoField, pesoField, comentariosField;
@@ -22,9 +25,11 @@ public class IngresoEspecie extends JFrame {
 
     private List<Refugio> refugios=new ArrayList<>();;
 
+    String archivo = "C:\\Users\\Melanie\\OneDrive - Estudiantes ITCR\\POO\\Caso 2\\Caso2\\codigo\\EspeciesRefugios\\src\\files\\Datos.dat";
 
     public IngresoEspecie() {
-    	
+    	cargarRefugiosSerializados();
+    	/*
     	Especie uno=new Especie("Especie 1");
         Especie dos=new Especie("Especie 2");
         Especie tres=new Especie("Especie 3");
@@ -48,7 +53,7 @@ public class IngresoEspecie extends JFrame {
         this.refugios.add(Uno);
         this.refugios.add(Dos);
         this.refugios.add(Tres);
-        
+        */
     
         
 
@@ -200,6 +205,7 @@ public class IngresoEspecie extends JFrame {
                     
                     	Individuo nuevoIndividuo = new Individuo(fecha, razon, estado, peso, comentarios);
                         especieExistente.agregarIndividuo(nuevoIndividuo);
+                        guardarRefugiosSerializados();
                         JOptionPane.showMessageDialog(null, "Individuo agregado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                         dispose();
                  
@@ -244,6 +250,7 @@ public class IngresoEspecie extends JFrame {
                             nuevaEspecie.agregarIndividuo(nuevoIndividuo);
                             try {
                             	refugioSeleccionado.agregarEspecie(nuevaEspecie);
+                            	guardarRefugiosSerializados();
                             	JOptionPane.showMessageDialog(null, "Especie e individuo agregados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                                 
                             }catch (EspecieDuplicadaException ex) {
@@ -269,6 +276,32 @@ public class IngresoEspecie extends JFrame {
 
         setVisible(true);
     }
+    private void guardarRefugiosSerializados() {
+        try (FileOutputStream fos = new FileOutputStream(archivo);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+
+            oos.writeObject(refugios);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al guardar la especie.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void cargarRefugiosSerializados() {
+        try (FileInputStream fis = new FileInputStream(archivo);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+
+            Object obj = ois.readObject();
+            if (obj instanceof List) {
+                refugios = (List<Refugio>) obj;
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
     	SwingUtilities.invokeLater(() -> new IngresoEspecie());
     }

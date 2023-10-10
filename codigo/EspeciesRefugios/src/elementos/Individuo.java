@@ -1,8 +1,9 @@
 package elementos;
 
 import java.util.Date;
+import java.io.Serializable;
 
-public class Individuo {
+public class Individuo implements Serializable{
     private Date fechaIngreso;
     private String razonIngreso;
     private String estado;

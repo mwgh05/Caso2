@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import elementos.*;
@@ -19,6 +22,8 @@ public class VerEspecie extends JFrame {
     private List<Refugio> refugios=new ArrayList<>();
 
     public VerEspecie() {
+    	cargarRefugiosSerializados();
+    	/*
     	Especie uno=new Especie("Especie 1");
         Especie dos=new Especie("Especie 2");
         Especie tres=new Especie("Especie 3");
@@ -43,7 +48,7 @@ public class VerEspecie extends JFrame {
         this.refugios.add(Dos);
         this.refugios.add(Tres);
         
-        
+        */
         setTitle("Ver Especies por Refugio");
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -84,7 +89,7 @@ public class VerEspecie extends JFrame {
 
                 tableModel.setRowCount(0);
                 for (Especie especie : refugioSeleccionado.getEspecies()) {
-                	if(especie.getNombre()!="Other") {
+                	if(!especie.getNombre().equals("Other")) {
                 		tableModel.addRow(new Object[]{especie.getNombre()});
                     }
                 }
@@ -94,6 +99,21 @@ public class VerEspecie extends JFrame {
         add(panel);
 
         setVisible(true);
+    }
+    String archivo = "C:\\Users\\Melanie\\OneDrive - Estudiantes ITCR\\POO\\Caso 2\\Caso2\\codigo\\EspeciesRefugios\\src\\files\\Datos.dat";
+
+    private void cargarRefugiosSerializados() {
+        try (FileInputStream fis = new FileInputStream(archivo);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+
+            Object obj = ois.readObject();
+            if (obj instanceof List) {
+                refugios = (List<Refugio>) obj;
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

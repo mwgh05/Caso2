@@ -2,8 +2,11 @@ package elementos;
 import java.util.ArrayList;
 import exception.*;
 import java.util.List;
+import java.io.Serializable;
 
-public class Refugio {
+
+
+public class Refugio implements Serializable{
     private String nombre;
     private String provincia;
     private String canton;
@@ -36,7 +39,7 @@ public class Refugio {
             throw new EspecieDuplicadaException("La especie ya existe en este refugio.");
         }
     	}
-        especies.add(_especie);
+        especies.add(0,_especie);
     }
     
 }

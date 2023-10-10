@@ -1,8 +1,9 @@
 package elementos;
 import java.util.List;
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Provincia {
+public class Provincia implements Serializable{
 	private String nombre;
 	private List<String> cantones;
 	
