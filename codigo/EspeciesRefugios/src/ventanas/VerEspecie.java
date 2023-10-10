@@ -8,30 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 import elementos.*;
 import exception.EspecieDuplicadaException;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.table.DefaultTableModel;
 
 public class VerEspecie extends JFrame {
     private JComboBox<String> refugioComboBox;
-    private JTextArea especiesTextArea;
     private JButton verEspeciesButton;
+    private JTable especiesTable;
+    private DefaultTableModel tableModel;
 
-    private List<Refugio> refugios=new ArrayList<>();; 
-    private List<Especie> especies;
+    private List<Refugio> refugios=new ArrayList<>();
 
-    public VerEspecie() {//List<Refugio> refugios, List<Especie> especies) {
+    public VerEspecie() {
     	Especie uno=new Especie("Especie 1");
         Especie dos=new Especie("Especie 2");
         Especie tres=new Especie("Especie 3");
@@ -74,9 +61,11 @@ public class VerEspecie extends JFrame {
         comboBoxPanel.add(refugioComboBox);
         panel.add(comboBoxPanel, BorderLayout.NORTH);
 
-        especiesTextArea = new JTextArea();
-        especiesTextArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(especiesTextArea);
+        tableModel = new DefaultTableModel();
+        tableModel.addColumn("Nombre de la Especie");
+        especiesTable = new JTable(tableModel);
+
+        JScrollPane scrollPane = new JScrollPane(especiesTable);
         panel.add(scrollPane, BorderLayout.CENTER);
 
         verEspeciesButton = new JButton("Ver Especies");
@@ -93,14 +82,12 @@ public class VerEspecie extends JFrame {
                     }
                 }
 
-                StringBuilder especiesTexto = new StringBuilder();
+                tableModel.setRowCount(0);
                 for (Especie especie : refugioSeleccionado.getEspecies()) {
                 	if(especie.getNombre()!="Other") {
-                    especiesTexto.append("Nombre: ").append(especie.getNombre()).append("\n");
-                    especiesTexto.append("\n");
-                	}
+                		tableModel.addRow(new Object[]{especie.getNombre()});
+                    }
                 }
-                especiesTextArea.setText(especiesTexto.toString());
             }
         });
 
