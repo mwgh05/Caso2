@@ -23,4 +23,5 @@ public class Especie implements Serializable{
     public void agregarIndividuo(Individuo individuo) {
         individuos.add(individuo);
     }
+    
 }

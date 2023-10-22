@@ -1,6 +1,11 @@
 package controladores;
 import java.io.FileInputStream;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,10 +17,10 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import elementos.*;
+import ventanas.IngresoEspecie;
 import exception.EspecieDuplicadaException;
 
-public class IngresoEspecieController{
-	//private List<Refugio> refugios=new ArrayList<>();
+public class Controller{
 	
 	String archivo = "C:\\Users\\Melanie\\OneDrive - Estudiantes ITCR\\POO\\Caso 2\\Caso2\\codigo\\EspeciesRefugios\\src\\files\\Datos.dat";
 
@@ -78,7 +83,7 @@ public class IngresoEspecieController{
                 
          
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "El valor de peso debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            	IngresoEspecie.pesoInvalido();
             }
         }else {
             JOptionPane.showMessageDialog(null, "El refugio seleccionado no existe.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -125,96 +130,30 @@ public class IngresoEspecieController{
         }
     	
     }
+    public void agregarRefugio(Refugio nuevoRefugio, List<Refugio> refugios) {
+    	try {
+			nuevoRefugio.agregarEspecie(new Especie("Other"));
+		} catch (EspecieDuplicadaException e1) {
+			e1.printStackTrace();
+		}
+        refugios.add(nuevoRefugio);
+        guardarRefugiosSerializados(refugios);
+        JOptionPane.showMessageDialog(null, "Refugio agregado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        
+    }
+    public JsonArray cargarProvincias(){
+    	String path="C:\\Users\\Melanie\\OneDrive - Estudiantes ITCR\\POO\\Caso 2\\Caso2\\codigo\\EspeciesRefugios\\src\\files\\Provincias.json";
+    	JsonArray provincias=new JsonArray();
+    	try {
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(new FileReader(path), JsonObject.class);
+            provincias=jsonObject.getAsJsonArray("provincias");
+            return provincias;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    	return provincias;
+    }
+
     
-
-    //public static void main(String[] args) {
-    	//SwingUtilities.invokeLater(() -> new IngresoEspecie());
-    //}
 }
-/*
-public class IngresoEspecieController {
-    private IngresoEspecie ingresoEspecie;
-    private List<Refugio> refugios = new ArrayList<>();
-    private String archivo = "C:\\Users\\Melanie\\OneDrive - Estudiantes ITCR\\POO\\Caso 2\\Caso2\\codigo\\EspeciesRefugios\\src\\files\\Datos.dat";
-
-    public void setIngresoEspecie(IngresoEspecie ingresoEspecie) {
-        this.ingresoEspecie = ingresoEspecie;
-        cargarRefugiosSerializados();
-        cargarRefugioComboBox();
-    }
-
-    private void cargarRefugioComboBox() {
-        JComboBox<String> refugioComboBox = this.ingresoEspecie.getRefugioComboBox();
-        //refugioComboBox.removeAllItems();
-        for (Refugio refugio : refugios) {
-            refugioComboBox.addItem(refugio.getNombre());
-        }
-    }
-
-    private void cargarRefugiosSerializados() {
-        try (FileInputStream fis = new FileInputStream(archivo);
-             ObjectInputStream ois = new ObjectInputStream(fis)) {
-
-            Object obj = ois.readObject();
-            if (obj instanceof List) {
-                refugios = (List<Refugio>) obj;
-            }
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-    private void cargarRefugios() {
-        DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
-        for (Refugio refugio : refugios) {
-            comboBoxModel.addElement(refugio.getNombre());
-        }
-        ingresoEspecie.setRefugioComboBoxModel(comboBoxModel);
-    }
-    //public JComboBox<String> getRefugioComboBox() {
-      //  return ingresoEspecie.refugioComboBox;
-    //}
-
-    public void agregarIndividuo(String nombreRefugio, String nombreEspecie, Date fecha, String razon, String estado, double peso, String comentarios) {
-        // Implementa la lógica para agregar un individuo a la especie en el refugio seleccionado.
-        // Debes encontrar el refugio y la especie correctos en la lista de refugios y realizar la operación.
-
-        // Ejemplo ficticio:
-        // Refugio refugioSeleccionado = buscarRefugioPorNombre(nombreRefugio);
-        // Especie especieExistente = buscarEspeciePorNombre(refugioSeleccionado, nombreEspecie);
-        // Individuo nuevoIndividuo = new Individuo(fecha, razon, estado, peso, comentarios);
-        // especieExistente.agregarIndividuo(nuevoIndividuo);
-        // ...
-
-        // Una vez realizada la operación, guarda los refugios serializados nuevamente:
-        guardarRefugiosSerializados();
-    }
-
-    public void crearEspecieConIndividuo(String nombreRefugio, String nombreEspecie, Date fecha, String razon, String estado, double peso, String comentarios) {
-        // Implementa la lógica para crear una nueva especie con un individuo en el refugio seleccionado.
-        // Debes encontrar el refugio correcto en la lista de refugios y realizar la operación.
-
-        // Ejemplo ficticio:
-        // Refugio refugioSeleccionado = buscarRefugioPorNombre(nombreRefugio);
-        // Especie nuevaEspecie = new Especie(nombreEspecie);
-        // Individuo nuevoIndividuo = new Individuo(fecha, razon, estado, peso, comentarios);
-        // nuevaEspecie.agregarIndividuo(nuevoIndividuo);
-        // refugioSeleccionado.agregarEspecie(nuevaEspecie);
-        // ...
-
-        // Una vez realizada la operación, guarda los refugios serializados nuevamente:
-        guardarRefugiosSerializados();
-    }
-
-    private void guardarRefugiosSerializados() {
-        try (FileOutputStream fos = new FileOutputStream(archivo);
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-
-            oos.writeObject(refugios);
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al guardar la especie.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-}*/

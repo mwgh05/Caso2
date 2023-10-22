@@ -1,0 +1,81 @@
+{
+    "provincias" : [
+        {"provincia": "San Jose", 
+            "cantones": [
+            "San Jose",
+            "Escazu",
+            "Desamparados",
+            "Puriscal",
+            "Montes de Oca",
+            "Aserri",
+            "Mora"
+          ]
+        },
+          {"provincia": "Alajuela",
+            "cantones": [
+              "Alajuela",
+              "San Ramon",
+              "Grecia",
+              "Atenas",
+              "Naranjo",
+              "Palmares",
+              "Poas"
+            ]
+          },
+          {"provincia": "Cartago",
+            "cantones": [
+              "Cartago",
+              "Paraíso",
+              "La Unión",
+              "Jimenez",
+              "Turrialba",
+              "Alvarado",
+              "Oreamuno"
+            ]
+          },
+          {"provincia": "Heredia",
+            "cantones": [
+              "Heredia",
+              "Barva",
+              "Santo Domingo",
+              "Santa Barbara",
+              "San Rafael",
+              "San Isidro",
+              "Belen"
+            ]
+          },
+          {"provincia": "Guanacaste",
+            "cantones": [
+              "Liberia",
+              "Nicoya",
+              "Santa Cruz",
+              "Bagaces",
+              "Carrillo",
+              "Cañas",
+              "Abangares"
+            ]
+          },
+          {"provincia": "Puntarenas",
+            "cantones": [
+              "Puntarenas",
+              "Esparza",
+              "Buenos Aires",
+              "Montes de Oro",
+              "Osa",
+              "Quepos",
+              "Golfito"
+            ]
+          },
+          {"provincia": "Limon",
+            "cantones": [
+              "Limon",
+              "Pococi",
+              "Siquirres",
+              "Talamanca",
+              "Matina",
+              "Guácimo"
+            ]
+          }
+        
+    ]
+}

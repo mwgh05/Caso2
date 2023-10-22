@@ -1,50 +1,34 @@
 package ventanas;
 import javax.swing.*;
 
+import controladores.Controller;
 import elementos.*;
-import exception.EspecieDuplicadaException;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 
 
 
 public class IngresoRefugio extends JFrame {
+	private Controller controller= new Controller();
     private JTextField nombreField, areaField, horarioField, senasField;
     private JComboBox<String> provinciaComboBox;
     private JComboBox<String> cantonComboBox;
     private JButton agregarButton;
     
     private List<Refugio> refugios = new ArrayList<>();
-    private List<Provincia> provincias=new ArrayList<>();
-    private List<String> cantones;
+    private JsonArray provincias=new JsonArray();
 
     public IngresoRefugio() {
-    	cargarRefugiosSerializados();
-    	Provincia Prov1=new Provincia("Guanacaste");
-    	Provincia Prov2=new Provincia("Puntarenas");
-    	Provincia Prov3=new Provincia("Limon");
-    	Provincia Prov4=new Provincia("Alajuela");
-    	Provincia Prov5=new Provincia("San Jose");
-    	Provincia Prov6=new Provincia("Cartago");
-    	Provincia Prov7=new Provincia("Heredia");
-    	String cant1="Canton A";
-    	String cant2="Canton B";
-    	String cant3="Canton C";
-    	Prov1.agregarCanton(cant1);
-    	Prov1.agregarCanton(cant2);
-    	Prov2.agregarCanton(cant2);
-    	Prov2.agregarCanton(cant3);
-    	Prov3.agregarCanton(cant3);
-    	Prov3.agregarCanton(cant1);
-    	provincias.add(Prov1);
-        provincias.add(Prov2);
-        provincias.add(Prov3);
-        
+    	this.refugios=controller.cargarRefugiosSerializados();
+    	this.provincias=controller.cargarProvincias();
+    	
         setTitle("Ingreso de Refugio");
         setSize(500, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -91,25 +75,34 @@ public class IngresoRefugio extends JFrame {
 
         constraints.gridx = 1;
         provinciaComboBox = new JComboBox<>();
-        for (Provincia provincia : provincias) {
-            provinciaComboBox.addItem(provincia.getNombre());
-            provinciaComboBox.addActionListener(new ActionListener() {           
-                public void actionPerformed(ActionEvent e) {
-                    String provinciaSeleccionada = (String) provinciaComboBox.getSelectedItem();
+        for (int i = 0; i < provincias.size(); i++) {
+            JsonObject provinciaObject = provincias.get(i).getAsJsonObject();
+            String nombreProvincia = provinciaObject.get("provincia").getAsString();
+            
+            provinciaComboBox.addItem(nombreProvincia);
+        }
+        provinciaComboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String provinciaSeleccionada = (String) provinciaComboBox.getSelectedItem();
 
-                    cantonComboBox.removeAllItems();
+                for (JsonElement elemento : provincias) {
+                    JsonObject provinciaObjeto = elemento.getAsJsonObject();
+                    String nombreProvincia = provinciaObjeto.get("provincia").getAsString();
 
-                    for (Provincia provincia : provincias) {
-                        if (provincia.getNombre().equals(provinciaSeleccionada)) {
-                            for (String canton : provincia.getCantones()) {
-                                cantonComboBox.addItem(canton);
-                            }
-                            break; 
+                    if (nombreProvincia.equals(provinciaSeleccionada)) {
+                        JsonArray cantones = provinciaObjeto.getAsJsonArray("cantones");
+                        cantonComboBox.removeAllItems(); 
+                        
+                        for (JsonElement canton : cantones) {
+                            cantonComboBox.addItem(canton.getAsString());
                         }
+
+                        break;
                     }
                 }
-            });
-        }
+            }
+        });
+        
         panel.add(provinciaComboBox, constraints);
 
         constraints.gridx = 2;
@@ -150,15 +143,7 @@ public class IngresoRefugio extends JFrame {
                 String senas = senasField.getText();
 
                 Refugio nuevoRefugio=new Refugio(nombre,provincia,canton,senas,area,horario);
-                
-                try {
-					nuevoRefugio.agregarEspecie(new Especie("Other"));
-				} catch (EspecieDuplicadaException e1) {
-					e1.printStackTrace();
-				}
-                refugios.add(nuevoRefugio);
-                guardarRefugiosSerializados();
-                //JOptionPane.showMessageDialog(null, "Refugio agregado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                controller.agregarRefugio(nuevoRefugio, refugios);
                 
                 dispose();
             }
@@ -168,36 +153,8 @@ public class IngresoRefugio extends JFrame {
 
         setVisible(true);
     }
-    String archivo = "C:\\Users\\Melanie\\OneDrive - Estudiantes ITCR\\POO\\Caso 2\\Caso2\\codigo\\EspeciesRefugios\\src\\files\\Datos.dat";
-
-    private void guardarRefugiosSerializados() {
-        try (FileOutputStream fos = new FileOutputStream(archivo);
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-
-            oos.writeObject(refugios);
-            JOptionPane.showMessageDialog(null, "Refugios guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al guardar los refugios.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
     public static void main(String[] args) {
     	SwingUtilities.invokeLater(() -> new IngresoRefugio());
-    }
-    private void cargarRefugiosSerializados() {
-        try (FileInputStream fis = new FileInputStream(archivo);
-             ObjectInputStream ois = new ObjectInputStream(fis)) {
-
-            Object obj = ois.readObject();
-            if (obj instanceof List) {
-                refugios = (List<Refugio>) obj;
-            }
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 }
 
